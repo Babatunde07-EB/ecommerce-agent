@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commerce Agent</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f5f7fb; color: #1f2937; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 24px; }
+    h1 { font-size: 1.9rem; }
+    .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 16px 45px rgba(15,23,42,0.08); margin-bottom: 20px; }
+    label { display: block; margin: 14px 0 6px; font-weight: 600; }
+    input, textarea, select { width: 100%; padding: 12px 14px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 0.97rem; }
+    button { background: #2563eb; color: white; border: none; border-radius: 12px; padding: 12px 18px; cursor: pointer; font-weight: 700; }
+    button:hover { background: #1d4ed8; }
+    .response { white-space: pre-wrap; margin-top: 16px; color: #111827; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Commerce Agent</h1>
+        <p>Personalized recommendations · Automated orders · Customer support · Marketing campaigns</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2>Product Recommendation</h2>
+      <label for="rec-user">User ID</label>
+      <input id="rec-user" value="U1001" />
+      <label for="rec-context">Context / Intent</label>
+      <textarea id="rec-context" rows="3" placeholder="e.g. new gift idea for active traveler"></textarea>
+      <button onclick="sendRecommendation()">Get Recommendations</button>
+      <div id="rec-response" class="response"></div>
+    </div>
+
+    <div class="card">
+      <h2>Order Processing</h2>
+      <label for="order-user">User ID</label>
+      <input id="order-user" value="U1001" />
+      <label for="order-items">Order Items (JSON)</label>
+      <textarea id="order-items" rows="4">[{ "product_id": "P1003", "quantity": 1 }]</textarea>
+      <button onclick="sendOrder()">Create Order</button>
+      <div id="order-response" class="response"></div>
+    </div>
+
+    <div class="card">
+      <h2>Customer Support</h2>
+      <label for="support-user">User ID</label>
+      <input id="support-user" value="U1001" />
+      <label for="support-inquiry">Inquiry</label>
+      <textarea id="support-inquiry" rows="4">I need help updating my shipping address before checkout.</textarea>
+      <button onclick="sendSupport()">Send Support Request</button>
+      <div id="support-response" class="response"></div>
+    </div>
+
+    <div class="card">
+      <h2>Marketing Campaign</h2>
+      <label for="campaign-name">Campaign Name</label>
+      <input id="campaign-name" value="Spring Launch" />
+      <label for="campaign-audience">Audience</label>
+      <input id="campaign-audience" value="young professionals looking for smart home upgrades" />
+      <label for="campaign-objective">Objective</label>
+      <input id="campaign-objective" value="boost conversion by 25% on smart home products" />
+      <label for="campaign-channels">Channels (comma separated)</label>
+      <input id="campaign-channels" value="email, social media, paid search" />
+      <label for="campaign-offer">Offer</label>
+      <input id="campaign-offer" value="free shipping for orders over $99" />
+      <button onclick="sendCampaign()">Create Campaign</button>
+      <div id="campaign-response" class="response"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiBase = '';
+
+    async function sendRecommendation() {
+      const user_id = document.getElementById('rec-user').value;
+      const current_context = document.getElementById('rec-context').value;
+      const responseEl = document.getElementById('rec-response');
+      responseEl.textContent = 'Loading...';
+      const res = await fetch(`${apiBase}/recommendations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, current_context }),
+      });
+      const data = await res.json();
+      responseEl.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function sendOrder() {
+      const user_id = document.getElementById('order-user').value;
+      const items = JSON.parse(document.getElementById('order-items').value);
+      const responseEl = document.getElementById('order-response');
+      responseEl.textContent = 'Loading...';
+      const res = await fetch(`${apiBase}/orders/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, items }),
+      });
+      const data = await res.json();
+      responseEl.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function sendSupport() {
+      const user_id = document.getElementById('support-user').value;
+      const inquiry = document.getElementById('support-inquiry').value;
+      const responseEl = document.getElementById('support-response');
+      responseEl.textContent = 'Loading...';
+      const res = await fetch(`${apiBase}/customer-support`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, inquiry }),
+      });
+      const data = await res.json();
+      responseEl.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function sendCampaign() {
+      const name = document.getElementById('campaign-name').value;
+      const audience = document.getElementById('campaign-audience').value;
+      const objective = document.getElementById('campaign-objective').value;
+      const channels = document.getElementById('campaign-channels').value.split(',').map(c => c.trim());
+      const offer = document.getElementById('campaign-offer').value;
+      const responseEl = document.getElementById('campaign-response');
+      responseEl.textContent = 'Loading...';
+      const res = await fetch(`${apiBase}/campaigns/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, audience, objective, channels, offer }),
+      });
+      const data = await res.json();
+      responseEl.textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
