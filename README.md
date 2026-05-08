@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Commerce Agent
 
 A next-generation commerce orchestration agent that:
@@ -41,3 +42,7 @@ A next-generation commerce orchestration agent that:
 - `POST /customer-support`
 - `POST /campaigns/create`
 - `GET /health`
+=======
+# ecommerce-agent
+AI-powered e-commerce agent built with FastAPI and Claude AI
+>>>>>>> c678e4d53eb2f62af9b413cea90624e5023658a4
